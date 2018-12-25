@@ -34,12 +34,12 @@ def info_movie():
     response = requests.get(movie_url)
     results_json = json.loads(response.text)
     results = results_json['results']
-    movie_id = results[0]['id']
-    movie_id_url = 'https://api.themoviedb.org/3/movie/' + str(movie_id)\
-                   + '?api_key=ffb07b773769d55c36ccd83845385205&language=en-US'
-    response = requests.get(movie_id_url)
-    movie_details = json.loads(response.text)
     try:
+        movie_id = results[0]['id']
+        movie_id_url = 'https://api.themoviedb.org/3/movie/' + str(movie_id) \
+                       + '?api_key=ffb07b773769d55c36ccd83845385205&language=en-US'
+        response = requests.get(movie_id_url)
+        movie_details = json.loads(response.text)
         movie_title = movie_details['title']
         movie_imdb_id = movie_details['imdb_id']
         movie_year = movie_details['release_date']
@@ -88,7 +88,7 @@ def info_movie():
             status.write("\n\t GENRE       : \t\t" + "-")
         status.write("\n\t PLOT        : \t\t" + movie_plot)
 
-    except KeyError:
+    except (KeyError, IndexError) as e:
         print("\nNo such movie titled '" + name + "' found!\n")
         status.write("\nNo such movie titled '" + name + "' found!\n")
 
