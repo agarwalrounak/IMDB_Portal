@@ -120,57 +120,61 @@ def top_movies():
 
 def folder():
     path = raw_input("\n\nEnter the complete path of the directory where your movies are present: ")
-    dirs = os.listdir(path)
-    print("Showing results for the path: " + path + "\n")
-    status.write('Showing results for the path: ' + path + '\n')
+    try:
+        dirs = os.listdir(path)
+        print("Showing results for the path: " + path + "\n")
+        status.write('Showing results for the path: ' + path + '\n')
 
-    for i in range(len(dirs)):
-        dir_name = dirs[i]
-        if dir_name == '.DS_Store':
-            continue
-        name = dir_name.replace(' ', '%20')
-        movie_url = 'https://api.themoviedb.org/3/search/movie?' \
-                    'api_key=ffb07b773769d55c36ccd83845385205&language=en-US&query='\
-                    + str(name) + '&page=1&include_adult=false'
-        response = requests.get(movie_url)
-        results_json = json.loads(response.text)
-        results = results_json['results']
-        movie_id = results[0]['id']
-        movie_id_url = 'https://api.themoviedb.org/3/movie/' + str(movie_id)\
-                       + '?api_key=ffb07b773769d55c36ccd83845385205&language=en-US'
-        response = requests.get(movie_id_url)
-        movie_details = json.loads(response.text)
+        for i in range(len(dirs)):
+            dir_name = dirs[i]
+            if dir_name == '.DS_Store':
+                continue
+            name = dir_name.replace(' ', '%20')
+            movie_url = 'https://api.themoviedb.org/3/search/movie?' \
+                        'api_key=ffb07b773769d55c36ccd83845385205&language=en-US&query=' \
+                        + str(name) + '&page=1&include_adult=false'
+            response = requests.get(movie_url)
+            results_json = json.loads(response.text)
+            results = results_json['results']
+            movie_id = results[0]['id']
+            movie_id_url = 'https://api.themoviedb.org/3/movie/' + str(movie_id) \
+                           + '?api_key=ffb07b773769d55c36ccd83845385205&language=en-US'
+            response = requests.get(movie_id_url)
+            movie_details = json.loads(response.text)
 
-        try:
-            movie_title = movie_details['title']
-            movie_year = movie_details['release_date']
-            movie_imdb_id = movie_details['imdb_id']
+            try:
+                movie_title = movie_details['title']
+                movie_year = movie_details['release_date']
+                movie_imdb_id = movie_details['imdb_id']
 
-            imdb_id_url = 'http://www.imdb.com/title/' + str(movie_imdb_id)
-            response = requests.get(imdb_id_url)
-            html = response.text
-            soup = bs4.BeautifulSoup(html, "lxml")
-            data = soup.select('.ratingValue strong span')
-            if data:
-                movie_rating = data[0].get_text('', strip=True)
-            else:
-                movie_rating = "-"
+                imdb_id_url = 'http://www.imdb.com/title/' + str(movie_imdb_id)
+                response = requests.get(imdb_id_url)
+                html = response.text
+                soup = bs4.BeautifulSoup(html, "lxml")
+                data = soup.select('.ratingValue strong span')
+                if data:
+                    movie_rating = data[0].get_text('', strip=True)
+                else:
+                    movie_rating = "-"
 
-            if sys.version[0] != '3':
-                dir_name = dir_name.encode('ascii', 'ignore')
-            folder_name = "[" + movie_rating + "] " + movie_title + " (" + movie_year[:4] + ")"
-            if sys.version[0] != '3':
-                folder_name = folder_name.encode('ascii', 'ignore')
-            print("\n" + folder_name)
-            status.write("\n" + folder_name)
-            os.rename(os.path.join(path, dir_name), os.path.join(path, folder_name))
-            print("Renaming Done\n")
-            status.write('Renaming Done\n')
-        except KeyError:
-            print("\nNo such movie titled '" + dir_name
-                  + "' found or else read the instructions before using this feature!\n")
-            status.write("\nNo such movie titled '" + dir_name
-                         + "' found else read the instructions before using this feature!\n")
+                if sys.version[0] != '3':
+                    dir_name = dir_name.encode('ascii', 'ignore')
+                folder_name = "[" + movie_rating + "] " + movie_title + " (" + movie_year[:4] + ")"
+                if sys.version[0] != '3':
+                    folder_name = folder_name.encode('ascii', 'ignore')
+                print("\n" + folder_name)
+                status.write("\n" + folder_name)
+                os.rename(os.path.join(path, dir_name), os.path.join(path, folder_name))
+                print("Renaming Done\n")
+                status.write('Renaming Done\n')
+            except KeyError:
+                print("\nNo such movie titled '" + dir_name
+                      + "' found or else read the instructions before using this feature!\n")
+                status.write("\nNo such movie titled '" + dir_name
+                             + "' found else read the instructions before using this feature!\n")
+    except OSError:
+        print("\nNo such file or directory: '" + path + "' found!\n")
+        status.write("\nNo such file or directory: '" + path + "' found!\n")
 
 
 def driver():
