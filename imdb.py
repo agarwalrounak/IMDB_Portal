@@ -94,28 +94,32 @@ def info_movie():
 
 
 def top_movies():
-    rank = int(raw_input("\nEnter n, to display Top 'n' movies: "))
-    rank_url = 'http://www.imdb.com/chart/top'
-    response = requests.get(rank_url)
-    html = response.text
-    soup = bs4.BeautifulSoup(html, "lxml")
-    rows = soup.select('.lister-list tr')
-    print("\n" + "----------------------------------TOP " + str(rank) +
-          " MOVIES ACCORDING TO IMDB RATINGS---------------------------------" + "\n\n")
-    print(" \t   TITLE\t\t\t\t\t\t\t\t\t\t   IMDB RATING\n\n")
-    status.write("\n" + "---------------------------TOP " + str(rank) +
-                 " MOVIES ACCORDING TO IMDB RATINGS-----------------------------" + "\n\n")
-    status.write(" \t   TITLE\t\t\t\t\t\t\t\t\t\t   IMDB RATING\n\n")
+    try:
+        rank = int(raw_input("\nEnter n, to display Top 'n' movies: "))
+        rank_url = 'http://www.imdb.com/chart/top'
+        response = requests.get(rank_url)
+        html = response.text
+        soup = bs4.BeautifulSoup(html, "lxml")
+        rows = soup.select('.lister-list tr')
+        print("\n" + "----------------------------------TOP " + str(rank) +
+              " MOVIES ACCORDING TO IMDB RATINGS---------------------------------" + "\n\n")
+        print(" \t   TITLE\t\t\t\t\t\t\t\t\t\t   IMDB RATING\n\n")
+        status.write("\n" + "---------------------------TOP " + str(rank) +
+                     " MOVIES ACCORDING TO IMDB RATINGS-----------------------------" + "\n\n")
+        status.write(" \t   TITLE\t\t\t\t\t\t\t\t\t\t   IMDB RATING\n\n")
 
-    for row in range(0, rank):
-        movie_data = rows[row].select('td')
-        movie_name = movie_data[1].get_text(' ', strip=True)
-        movie_rating = movie_data[2].get_text(' ', strip=True)
-        movie_details = ("\n " + movie_name.ljust(75, ' ') + "\t\t\t\t" + movie_rating + "\n")
-        if sys.version[0] != '3':
-            movie_details = movie_details.encode('ascii', 'ignore')
-        status.write(movie_details)
-        print(movie_details)
+        for row in range(0, rank):
+            movie_data = rows[row].select('td')
+            movie_name = movie_data[1].get_text(' ', strip=True)
+            movie_rating = movie_data[2].get_text(' ', strip=True)
+            movie_details = ("\n " + movie_name.ljust(75, ' ') + "\t\t\t\t" + movie_rating + "\n")
+            if sys.version[0] != '3':
+                movie_details = movie_details.encode('ascii', 'ignore')
+            status.write(movie_details)
+            print(movie_details)
+    except ValueError:
+        print("\nPlease enter a number as the value of n\n")
+        status.write("\nPlease enter a number as the value of n\n")
 
 
 def folder():
