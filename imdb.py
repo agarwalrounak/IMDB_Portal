@@ -198,8 +198,8 @@ def driver():
 
 driver()
 while 1 > 0:
-    repeat = raw_input("\n\nDo you want to try again?(type 'Yes'/'Y'/'y' or else press anything) ")
-    if (repeat == 'Yes') or (repeat == 'Y') or (repeat == 'y'):
+    repeat = raw_input("\n\nDo you want to try again?(type 'Yes'/'yes'/'Y'/'y' or else press anything) ")
+    if (repeat == 'Yes') or (repeat == 'yes') or (repeat == 'Y') or (repeat == 'y'):
         os.system('clear')
         driver()
     else:
